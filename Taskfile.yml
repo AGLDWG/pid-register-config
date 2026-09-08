@@ -1,0 +1,93 @@
+version: "3"
+silent: true
+
+includes:
+  prez:
+    taskfile: ./prez/Taskfile.yml
+    dir: ./prez
+
+vars:
+  COMPOSE_FILE: docker-compose.yml
+  COMPOSE_LOCAL_FILE: docker-compose.local.yml
+  ENV_FILE: docker/.env
+  DATA_MANIFEST: '{{.DATA_MANIFEST | default "../pid-register-data/resources/manifest.ttl"}}'
+
+tasks:
+  default:
+    cmd: task -a
+  stack:build:
+    aliases: [build:local]
+    desc: Build Prez, stock PrezUI, and local Fuseki
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local build
+
+  stack:up:
+    aliases: [up:local]
+    desc: Run Prez against local Fuseki
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local up -d
+
+  stack:down:
+    aliases: [down]
+    desc: Stop the local stack
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local down
+
+  stack:restart:
+    desc: Recreate the local stack from the current images and configuration
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local up -d --force-recreate
+
+  stack:logs:
+    aliases: [logs:local]
+    desc: Follow logs from the local Fuseki, Prez, and PrezUI stack
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local logs -f
+
+  stack:clean:
+    aliases: [clean]
+    desc: Stop the local stack and remove its volumes
+    prompt: This deletes the local Fuseki volume. Continue?
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local down -v
+
+  prez:restart:
+    desc: Restart only the Prez API container
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local restart prez
+
+  remote:build:
+    aliases: [build:remote]
+    desc: Build Prez and stock PrezUI for remote SPARQL
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} build prez prez-ui
+
+  remote:up:
+    aliases: [up:remote]
+    desc: Run Prez against SPARQL_ENDPOINT
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} up -d prez prez-ui
+
+  data:sync:
+    desc: Load data into local Fuseki
+    cmd: ./fuseki/kgm-sync.sh {{.DATA_MANIFEST}}
+  test:catalogues:
+    desc: Verify that Fuseki and Prez expose every catalogue from pid-register-data
+    cmd: ./scripts/test-catalogues.sh {{.DATA_MANIFEST}}
+  test:local:
+    desc: Load pid-register-data and verify the local Prez integration
+    cmds:
+      - task: data:sync
+        vars: { DATA_MANIFEST: '{{.DATA_MANIFEST}}' }
+      - task: test:catalogues
+        vars: { DATA_MANIFEST: '{{.DATA_MANIFEST}}' }
+  functions:build:
+    desc: Install the Function App and build its port-7071 UI image
+    deps: [prez:uv:sync]
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile functions build prez-ui-functions
+  functions:up:
+    desc: Start PrezUI configured for the local Azure Functions host
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile functions up -d prez-ui-functions
+  functions:down:
+    desc: Stop the Functions-mode UI
+    cmd: docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} --profile functions down
+  functions:dev:
+    desc: Start the Functions-mode UI and run Prez with Azure Functions Core Tools
+    deps: [functions:up]
+    cmd: task prez:dev
+  config:check:
+    desc: Validate local and remote Compose models
+    cmds:
+      - docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} -f {{.COMPOSE_LOCAL_FILE}} --profile local config --quiet
+      - docker compose --env-file {{.ENV_FILE}} -f {{.COMPOSE_FILE}} config --quiet

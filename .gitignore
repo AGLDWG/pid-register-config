@@ -1,0 +1,5 @@
+.task/
+.pnpm-store/
+docker/.env
+.idea/
+

@@ -1,0 +1,75 @@
+services:
+  fuseki:
+    profiles: ["local"]
+    build:
+      context: fuseki
+      args:
+        FUSEKI_VERSION: ${FUSEKI_VERSION:-6.2.0-0}
+    image: pid-register-fuseki:${FUSEKI_VERSION:-6.2.0-0}
+    environment:
+      ADMIN_PASSWORD: ${FUSEKI_ADMIN_PASSWORD:?Set FUSEKI_ADMIN_PASSWORD in docker/.env}
+      PIDDATA_USERNAME: ${PIDDATA_USERNAME:-piddata}
+      PIDDATA_PASSWORD: ${PIDDATA_PASSWORD:-${REFDATA_PASSWORD:?Set PIDDATA_PASSWORD in docker/.env}}
+      JAVA_OPTS: ${FUSEKI_JAVA_OPTS:--Xms512m -Xmx2g}
+    ports: ["3030:3030"]
+    volumes: ["fuseki-data:/fuseki"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:3030/$/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  prez:
+    build:
+      context: .
+      args:
+        PREZ_VERSION: ${PREZ_VERSION:-4.23.7}
+    image: pid-register-prez:${PREZ_VERSION:-4.23.7}
+    environment:
+      SPARQL_REPO_TYPE: remote
+      SPARQL_ENDPOINT: ${SPARQL_ENDPOINT:-https://example.invalid/sparql}
+      SPARQL_USERNAME: ${SPARQL_USERNAME:-}
+      SPARQL_PASSWORD: ${SPARQL_PASSWORD:-}
+      ENABLE_SPARQL_ENDPOINT: "true"
+      DISABLE_PREFIX_GENERATION: "true"
+      CORS_ALLOWED_ORIGIN: ${CORS_ALLOWED_ORIGIN:-http://localhost:3000}
+      ENDPOINT_STRUCTURE: '["catalogues", "catalogues", "items"]'
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://prez:8000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  prez-ui:
+    build:
+      context: .
+      dockerfile: prez-ui/Dockerfile
+      args:
+        PREZ_UI_VERSION: ${PREZ_UI_VERSION:-4.3.3}
+        NUXT_PUBLIC_PREZ_API_ENDPOINT: http://localhost:3000/api
+    image: pid-register-prez-ui:${PREZ_UI_VERSION:-4.3.3}
+    environment:
+      PREZ_UPSTREAM: http://prez:8000
+    ports: ["3000:3000"]
+    depends_on:
+      prez:
+        condition: service_healthy
+
+  prez-ui-functions:
+    profiles: ["functions"]
+    build:
+      context: .
+      dockerfile: prez-ui/Dockerfile
+      args:
+        PREZ_UI_VERSION: ${PREZ_UI_VERSION:-4.3.3}
+        NUXT_PUBLIC_PREZ_API_ENDPOINT: http://localhost:3000/api
+    image: pid-register-prez-ui:${PREZ_UI_VERSION:-4.3.3}-functions
+    environment:
+      PREZ_UPSTREAM: http://host.docker.internal:7071
+    ports: ["3000:3000"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
+volumes:
+  fuseki-data:

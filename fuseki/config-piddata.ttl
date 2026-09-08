@@ -1,0 +1,57 @@
+PREFIX :          <#>
+PREFIX dcterms:   <http://purl.org/dc/terms/>
+PREFIX fuseki:    <http://jena.apache.org/fuseki#>
+PREFIX rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:      <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema:    <https://schema.org/>
+PREFIX skos:      <http://www.w3.org/2004/02/skos/core#>
+PREFIX tdb2:      <http://jena.apache.org/2016/tdb#>
+PREFIX text:      <http://jena.apache.org/text#>
+
+:service rdf:type fuseki:Service ;
+    rdfs:label                       "AGLDWG PID Register" ;
+    fuseki:name                      "piddata" ;
+    # Expose the text dataset so Lucene is active for every query and update.
+    fuseki:dataset                   :textDataset ;
+    fuseki:serviceQuery              "" , "query" , "sparql" ;
+    fuseki:serviceUpdate             "" , "update" ;
+    fuseki:serviceUpload             "upload" ;
+    fuseki:serviceReadGraphStore     "get" ;
+    fuseki:serviceReadWriteGraphStore "data" .
+
+:textDataset rdf:type text:TextDataset ;
+    text:dataset :tdbDataset ;
+    text:index :luceneIndex .
+
+:tdbDataset rdf:type tdb2:DatasetTDB2 ;
+    tdb2:unionDefaultGraph true ;
+    tdb2:location "/fuseki/databases/piddata" .
+
+:luceneIndex rdf:type text:TextIndexLucene ;
+    text:directory <file:/fuseki/databases/piddata/text_index> ;
+    text:entityMap :entityMap ;
+    text:storeValues true ;
+    text:analyzer [ rdf:type text:StandardAnalyzer ] ;
+    text:queryAnalyzer [ rdf:type text:StandardAnalyzer ] ;
+    text:queryParser text:QueryParser ;
+    text:multilingualSupport true .
+
+:entityMap rdf:type text:EntityMap ;
+    text:defaultField "label" ;
+    text:entityField "uri" ;
+    text:uidField "uid" ;
+    text:langField "lang" ;
+    text:graphField "graph" ;
+    text:map (
+        [ text:field "label" ; text:predicate rdfs:label ]
+        [ text:field "prefLabel" ; text:predicate skos:prefLabel ]
+        [ text:field "altLabel" ; text:predicate skos:altLabel ]
+        [ text:field "name" ; text:predicate schema:name ]
+        [ text:field "alternateName" ; text:predicate schema:alternateName ]
+        [ text:field "title" ; text:predicate schema:title ]
+        [ text:field "dctermsTitle" ; text:predicate dcterms:title ]
+        [ text:field "description" ; text:predicate schema:description ]
+        [ text:field "dctermsDescription" ; text:predicate dcterms:description ]
+        [ text:field "comment" ; text:predicate schema:comment ]
+        [ text:field "rdfsComment" ; text:predicate rdfs:comment ]
+    ) .

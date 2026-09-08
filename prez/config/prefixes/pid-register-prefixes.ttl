@@ -1,0 +1,57 @@
+PREFIX vann: <http://purl.org/vocab/vann/>
+
+[]    vann:preferredNamespacePrefix "schema" ;
+    vann:preferredNamespaceUri "https://schema.org/" ;
+.
+
+[]    vann:preferredNamespacePrefix "reg" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/reg/" ;
+.
+
+[]    vann:preferredNamespacePrefix "pidorg" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/pid/org/" ;
+.
+
+[]    vann:preferredNamespacePrefix "pidenv" ;
+    vann:preferredNamespaceUri "http://environment.data.gov.au/pid/env/" ;
+.
+
+[]    vann:preferredNamespacePrefix "pid" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/def/pid/" ;
+.
+
+[]    vann:preferredNamespacePrefix "status" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/def/reg-statuses/" ;
+.
+
+[]    vann:preferredNamespacePrefix "orgs" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/reg/orgs" ;
+.
+
+[]    vann:preferredNamespacePrefix "org" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/org/" ;
+.
+
+[]    vann:preferredNamespacePrefix "models" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/reg/models" ;
+.
+
+[]    vann:preferredNamespacePrefix "piddataset" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/pid/dataset/" ;
+.
+
+[]    vann:preferredNamespacePrefix "vals" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/reg/vals" ;
+.
+
+[]    vann:preferredNamespacePrefix "piddef" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/pid/def/" ;
+.
+
+[]    vann:preferredNamespacePrefix "lifecycle" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/def/lifecycle/" ;
+.
+
+[]    vann:preferredNamespacePrefix "pids" ;
+    vann:preferredNamespaceUri "https://linked.data.gov.au/reg/pids/" ;
+.

@@ -1,0 +1,20 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  uv:sync:
+    desc: Sync the Azure Functions Python environment
+    cmd: env -u VIRTUAL_ENV uv sync --locked --all-extras --dev
+
+  uv:lock:
+    desc: Refresh the Python dependency lockfile
+    cmd: env -u VIRTUAL_ENV uv lock
+
+  uv:export:
+    desc: Export deployment dependencies to requirements.txt
+    cmd: env -u VIRTUAL_ENV uv export --locked --no-dev --no-hashes --no-emit-package rdf2geojson --output-file requirements.txt -q
+
+  dev:
+    desc: Run Prez through the local Azure Functions host on port 7071
+    cmd: env -u VIRTUAL_ENV uv run func start --python --port 7071

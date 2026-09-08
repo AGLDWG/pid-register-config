@@ -1,0 +1,9 @@
+services:
+  prez:
+    environment:
+      SPARQL_ENDPOINT: http://fuseki:3030/piddata/sparql
+      SPARQL_USERNAME: ${PIDDATA_USERNAME:-piddata}
+      SPARQL_PASSWORD: ${PIDDATA_PASSWORD:-${REFDATA_PASSWORD:?Set PIDDATA_PASSWORD in docker/.env}}
+    depends_on:
+      fuseki:
+        condition: service_healthy

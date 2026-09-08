@@ -1,0 +1,13 @@
+.git
+.idea
+.task
+data
+docker
+examples
+fuseki
+patches
+prez-ui/*
+!prez-ui/Dockerfile
+!prez-ui/nginx.conf
+!prez-ui/staticwebapp.config.json
+!prez-ui/overrides/**

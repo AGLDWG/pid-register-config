@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "SPARQL_REPO_TYPE": "remote",
+    "SPARQL_ENDPOINT": "http://localhost:3030/piddata/sparql",
+    "SPARQL_USERNAME": "piddata",
+    "SPARQL_PASSWORD": "replace-me",
+    "ENABLE_SPARQL_ENDPOINT": "true",
+    "DISABLE_PREFIX_GENERATION": "true",
+    "FUNCTION_APP_AUTH_LEVEL": "ANONYMOUS",
+    "FUNCTION_APP_ROOT_PATH": "",
+    "CORS_ALLOWED_ORIGIN": "http://localhost:3000",
+    "ENDPOINT_STRUCTURE": "[\"catalogues\", \"catalogues\", \"items\"]"
+  }
+}

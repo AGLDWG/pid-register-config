@@ -1,0 +1,169 @@
+PREFIX ex: <http://example.org/>
+PREFIX ont: <https://prez.dev/ont/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX pid: <https://linked.data.gov.au/def/pid/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+ex:catalogues-listing
+    a
+        ont:DynamicEndpoint ,
+        ont:ListingEndpoint ;
+    rdfs:label "Catalogues Listing" ;
+    ont:apiPath "/catalogues" ;
+    ont:relevantShapes ex:top-level-catalogue-shape ;
+.
+
+ex:catalogues-object
+    a
+        ont:DynamicEndpoint ,
+        ont:ObjectEndpoint ;
+    rdfs:label "Catalogue Object" ;
+    ont:apiPath "/catalogues/{catalogId}" ;
+    ont:relevantShapes ex:top-level-catalogue-shape ;
+.
+
+ex:child-catalogues-listing
+    a
+        ont:DynamicEndpoint ,
+        ont:ListingEndpoint ;
+    rdfs:label "Child Catalogues Listing" ;
+    ont:apiPath "/catalogues/{catalogId}/catalogues" ;
+    ont:relevantShapes ex:child-catalogue-shape ;
+.
+
+ex:child-catalogues-object
+    a
+        ont:DynamicEndpoint ,
+        ont:ObjectEndpoint ;
+    rdfs:label "Child Catalogue Object" ;
+    ont:apiPath "/catalogues/{catalogId}/catalogues/{childCatalogId}" ;
+    ont:relevantShapes ex:child-catalogue-shape ;
+.
+
+ex:child-items-listing
+    a
+        ont:DynamicEndpoint ,
+        ont:ListingEndpoint ;
+    rdfs:label "Child Catalogue Items Listing" ;
+    ont:apiPath "/catalogues/{catalogId}/catalogues/{childCatalogId}/items" ;
+    ont:relevantShapes
+        ex:child-item-shape ,
+        ex:model-item-shape ;
+.
+
+ex:child-items-object
+    a
+        ont:DynamicEndpoint ,
+        ont:ObjectEndpoint ;
+    rdfs:label "Child Catalogue Item Object" ;
+    ont:apiPath "/catalogues/{catalogId}/catalogues/{childCatalogId}/items/{itemId}" ;
+    ont:relevantShapes
+        ex:child-item-shape ,
+        ex:model-item-shape ;
+.
+
+ex:child-catalogue-shape
+    a sh:NodeShape ;
+    sh:property
+        [
+            sh:class schema:DataCatalog ;
+            sh:path
+                [
+                    sh:inversePath schema:hasPart ;
+                ] ;
+        ] ;
+    sh:targetClass
+        owl:Ontology ,
+        sh:ShapesGraph ,
+        schema:DataCatalog ,
+        schema:Organization ;
+    ont:hierarchyLevel 2 ;
+.
+
+ex:child-item-shape
+    a sh:NodeShape ;
+    sh:property
+        [
+            sh:class schema:DataCatalog ;
+            sh:path (
+
+                [
+                    sh:inversePath schema:hasPart ;
+                ]
+
+                [
+                    sh:inversePath schema:hasPart ;
+                ]
+            ) ;
+        ] ,
+        [
+            sh:class schema:DataCatalog ;
+            sh:path
+                [
+                    sh:inversePath schema:hasPart ;
+                ] ;
+        ] ;
+    sh:targetClass
+        pid:PID ,
+        pid:Pid ;
+    ont:hierarchyLevel 3 ;
+.
+
+# Classes and properties defined by a model are its level-three members.  The
+# second path also ties the model back to its containing top-level register.
+ex:model-item-shape
+    a sh:NodeShape ;
+    sh:property
+        [
+            sh:class owl:Ontology ;
+            sh:path rdfs:isDefinedBy ;
+        ] ,
+        [
+            sh:class schema:DataCatalog ;
+            sh:path (
+                rdfs:isDefinedBy
+                [ sh:inversePath schema:hasPart ]
+            ) ;
+        ] ;
+    sh:targetClass
+        rdf:Property ,
+        rdfs:Class ,
+        owl:Class ,
+        owl:AnnotationProperty ,
+        owl:DatatypeProperty ,
+        owl:ObjectProperty ;
+    ont:hierarchyLevel 3 ;
+.
+
+ex:top-level-catalogue-shape
+    a sh:NodeShape ;
+    sh:property
+        [
+            sh:or (
+
+                [
+                    sh:class schema:DataCatalog ;
+                ]
+
+                [
+                    sh:class schema:Organization ;
+                ]
+
+                [
+                    sh:class owl:Ontology ;
+                ]
+
+                [
+                    sh:class sh:ShapesGraph ;
+                ]
+
+            ) ;
+            sh:path schema:hasPart ;
+        ] ;
+    sh:targetClass schema:DataCatalog ;
+    ont:hierarchyLevel 1 ;
+.
