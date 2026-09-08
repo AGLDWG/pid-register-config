@@ -21,8 +21,8 @@ Install Docker with Compose, [Task](https://taskfile.dev/), and [kgm](https://ku
 ```bash
 cp docker/.env.example docker/.env
 # replace the two local password placeholders; PIDDATA_USERNAME defaults to piddata
-task build:local
-task up:local
+task stack:build
+task stacu:up
 task data:sync
 task test:catalogues
 ```
