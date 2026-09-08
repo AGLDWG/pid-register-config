@@ -1,0 +1,95 @@
+PREFIX altr-ext: <http://www.w3.org/ns/dx/connegp/altr-ext#>
+PREFIX dcat: <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prez: <https://prez.dev/>
+PREFIX prof: <http://www.w3.org/ns/dx/prof/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX shext: <http://example.com/shacl-extension#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+<https://prez.dev/profile/prez>
+    a prof:Profile, prez:IndexProfile ;
+    dcterms:identifier "prez"^^xsd:token ;
+    dcterms:title "Prez profile" ;
+    dcterms:description "A profile for the Prez Linked Data API" ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat "application/ld+json", "application/anot+ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ;
+.
+
+# This replaces Prez's bundled open-object profile. Structural membership is
+# intentionally absent so hasPart/includes can drive endpoints without appearing
+# as metadata in PrezUI.
+<https://prez.dev/profile/open-object>
+    a prof:Profile, prez:ObjectProfile ;
+    dcterms:identifier "openobj"^^xsd:token ;
+    dcterms:title "Open profile" ;
+    dcterms:description "PID Register metadata, excluding structural membership predicates." ;
+    altr-ext:constrainsClass prez:SPARQLQuery, prof:Profile, prez:SearchResult, prez:Object, prez:CQLFilterResult ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat "application/ld+json", "application/anot+ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ;
+    sh:property [
+        sh:path [ sh:union (
+            [ shext:bNodeDepth "25" ]
+            <http://example.org/qualifiedStatus>
+            dcterms:isRequiredBy
+            rdf:first rdf:rest rdf:type
+            rdfs:domain rdfs:isDefinedBy rdfs:range rdfs:subClassOf
+            <http://www.w3.org/2001/XMLSchema#pattern>
+            <http://www.w3.org/2002/07/owl#equivalentClass>
+            <http://www.w3.org/2002/07/owl#minQualifiedCardinality>
+            <http://www.w3.org/2002/07/owl#onClass>
+            <http://www.w3.org/2002/07/owl#onDatatype>
+            <http://www.w3.org/2002/07/owl#onProperty>
+            <http://www.w3.org/2002/07/owl#unionOf>
+            <http://www.w3.org/2002/07/owl#versionIRI>
+            <http://www.w3.org/2002/07/owl#withRestrictions>
+            <http://www.w3.org/2004/02/skos/core#example>
+            <http://www.w3.org/2004/02/skos/core#historyNote>
+            <http://www.w3.org/2006/time#hasBeginning>
+            <http://www.w3.org/2006/time#hasTime>
+            <http://www.w3.org/2006/time#inXSDDate>
+            dcat:hadRole dcat:qualifiedRelation
+            sh:class sh:datatype sh:deactivated sh:maxCount sh:message sh:minCount sh:nodeKind sh:or sh:path sh:property sh:select sh:sparql sh:targetClass
+            <https://linked.data.gov.au/def/lifecycle/hasLifecycleStage>
+            <https://linked.data.gov.au/def/pid/from>
+            <https://linked.data.gov.au/def/pid/headers>
+            <https://linked.data.gov.au/def/pid/redirectRules>
+            <https://linked.data.gov.au/def/pid/redirectTest>
+            <https://linked.data.gov.au/def/pid/to>
+            schema:additionalType schema:agent schema:alternateName schema:backstory
+            schema:codeRepository schema:copyrightHolder schema:creator
+            schema:dateCreated schema:dateIssued schema:dateModified schema:description
+            schema:identifier schema:isPartOf schema:license schema:member schema:memberOf
+            schema:name schema:parentOrganization schema:publisher schema:sponsor
+            schema:status schema:successorOf schema:url schema:value schema:version
+        ) ]
+    ] ;
+.
+
+<https://w3id.org/profile/mem>
+    a prof:Profile, prez:ListingProfile ;
+    dcterms:identifier "mem"^^xsd:token ;
+    dcterms:title "Members" ;
+    dcterms:description "Lists members of container resources." ;
+    altr-ext:constrainsClass rdfs:Resource, schema:DataCatalog, dcat:Catalog, prof:Profile ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat "application/ld+json", "application/anot+ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ;
+    sh:property [ sh:path rdf:type ] ;
+.
+
+<https://prez.dev/profile/profiles>
+    a prof:Profile, prez:ObjectProfile, prez:ListingProfile ;
+    dcterms:identifier "prof"^^xsd:token ;
+    dcterms:title "Profiles Profile" ;
+    dcterms:description "A profile for displaying profiles." ;
+    altr-ext:constrainsClass prof:Profile ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat "application/ld+json", "application/anot+ld+json", "application/rdf+xml", "text/anot+turtle", "text/turtle" ;
+    sh:property [ sh:path [ sh:union (
+        [ shext:bNodeDepth "25" ] rdf:type altr-ext:hasResourceFormat
+        altr-ext:hasDefaultResourceFormat dcterms:description dcterms:title dcterms:identifier
+    ) ] ] ;
+.
