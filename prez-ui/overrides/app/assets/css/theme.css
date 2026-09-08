@@ -96,6 +96,10 @@ main a,
     color: #8a4b12;
 }
 
+.home-copy p + p {
+    margin-top: .75em;
+}
+
 .pid-code-value > :first-child {
     display: block;
     padding: .75rem 1rem;
