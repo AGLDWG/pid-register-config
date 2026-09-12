@@ -100,6 +100,227 @@ main a,
     margin-top: .75em;
 }
 
+.about-copy > * + * {
+    margin-top: 1.5rem;
+}
+
+.about-copy a {
+    overflow-wrap: anywhere;
+    text-decoration: underline;
+}
+
+.pid-search-results {
+    padding: 0;
+    list-style: none;
+    color: var(--secondary);
+    background: #ffffff;
+}
+
+.pid-search-results li {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--accent);
+    overflow-wrap: anywhere;
+}
+
+.pid-search-result-title {
+    margin-bottom: .5rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.pid-search-result-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem 1rem;
+}
+
+.pid-search-result-title {
+    flex: 1 1 20rem;
+    min-width: 0;
+}
+
+.pid-search-parent {
+    font-size: .875rem;
+    font-weight: 400;
+}
+
+.pid-search-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.pid-search-types a {
+    padding: .2rem .5rem;
+    border: 1px solid var(--primary);
+    border-radius: .375rem;
+    background: var(--accent);
+    font-size: .875rem;
+}
+
+.pid-search-resource-links {
+    margin-bottom: .5rem;
+    font-size: .875rem;
+}
+
+.pid-search-results a {
+    color: var(--link);
+    text-decoration: underline;
+}
+
+.pid-search-match {
+    margin-top: .5rem;
+    font-size: .875rem;
+}
+
+.pid-pagination {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.pid-pagination nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.pid-pagination nav a {
+    padding: .5rem .75rem;
+    border: 1px solid var(--primary);
+    border-radius: .375rem;
+    color: var(--link);
+    text-decoration: underline;
+}
+
+.pid-pagination nav a:hover {
+    background: var(--accent);
+}
+
+.home-heading {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.home-title {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+}
+
+.home-heading-image {
+    flex: 0 0 12.5%;
+    width: 12.5%;
+    height: auto;
+}
+
+.home-info-boxes {
+    display: grid;
+    width: calc(50% + .75rem);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.home-info-box {
+    padding: 1.5rem;
+    border-radius: .75rem;
+    color: var(--accent-foreground);
+    background: var(--accent);
+}
+
+.home-info-box h2 {
+    margin-bottom: .75rem;
+}
+
+.home-governance-box {
+    grid-column: 1 / -1;
+}
+
+.home-info-box-dark {
+    color: var(--secondary-foreground);
+    background: var(--secondary);
+}
+
+.home-info-box.home-info-box-dark a {
+    color: var(--secondary-foreground);
+    text-decoration: underline;
+}
+
+.home-info-box.home-info-box-dark a:hover {
+    text-decoration: none;
+}
+
+.home-info-links {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.home-info-links a {
+    font-size: 1.25rem;
+    text-decoration: underline;
+}
+
+.home-request-box a {
+    text-decoration: underline;
+}
+
+.home-login-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-top: .5rem;
+}
+
+.home-login-form {
+    display: grid;
+    gap: .5rem;
+    margin-top: 1rem;
+}
+
+.home-login-form input {
+    width: 100%;
+    min-width: 0;
+    padding: .5rem .75rem;
+    border: 1px solid var(--secondary);
+    border-radius: .375rem;
+    color: var(--secondary);
+    background: var(--primary-foreground);
+}
+
+.home-login-form button {
+    justify-self: start;
+    padding: .5rem 1.25rem;
+    border-radius: .375rem;
+    color: var(--primary-foreground);
+    background: var(--primary);
+    cursor: pointer;
+}
+
+.home-login-form input:focus-visible,
+.home-login-form button:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+    .home-info-boxes {
+        width: 100%;
+        grid-template-columns: 1fr;
+    }
+}
+
 .pid-code-value > :first-child {
     display: block;
     padding: .75rem 1rem;

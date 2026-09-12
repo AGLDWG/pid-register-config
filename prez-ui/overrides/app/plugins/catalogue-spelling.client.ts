@@ -50,6 +50,9 @@ function updateText(root: Node): void {
             root.parentElement?.remove();
             return;
         }
+        // Keep displayed resource addresses identical to their actual destinations.
+        const link = root.parentElement?.closest("a[href]");
+        if (link && link.textContent?.trim() === link.getAttribute("href")) return;
         const replacement = useCatalogueSpelling(root.nodeValue);
         if (replacement !== root.nodeValue) root.nodeValue = replacement;
         return;

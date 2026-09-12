@@ -10,7 +10,7 @@ const menu = [
     { label: "Registers", url: "/catalogues" },
     { label: "Search", url: "/search" },
     { label: "SPARQL", url: "/sparql" },
-    { label: "About", url: "/about" },
+    { label: "PID System", url: "/about" },
     { label: "API Documentation", url: "/docs" },
 ];
 </script>
