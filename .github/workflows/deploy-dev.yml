@@ -1,0 +1,106 @@
+name: Deploy dev
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: pid-register-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    environment:
+      name: dev
+      url: ${{ vars.PREZ_UI_URL }}
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      AZURE_FUNCTION_APP_NAME: ${{ vars.AZURE_FUNCTION_APP_NAME }}
+      PREZ_API_ENDPOINT: ${{ vars.PREZ_API_ENDPOINT }}
+      PREZ_UI_URL: ${{ vars.PREZ_UI_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check deployment configuration
+        env:
+          SWA_TOKEN: ${{ secrets.PREZ_UI_SWA_DEPLOYMENT_TOKEN }}
+        run: |
+          for name in AZURE_CLIENT_ID AZURE_TENANT_ID AZURE_SUBSCRIPTION_ID AZURE_FUNCTION_APP_NAME PREZ_API_ENDPOINT PREZ_UI_URL SWA_TOKEN; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing dev environment setting: $name"
+              exit 1
+            fi
+          done
+          [[ "$PREZ_API_ENDPOINT" == https://* ]]
+          [[ "$PREZ_UI_URL" == https://* ]]
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.9.1'
+
+      - name: Package Prez with locked Linux dependencies
+        working-directory: prez
+        run: |
+          uv export --locked --no-dev --no-emit-project --no-hashes --output-file "$RUNNER_TEMP/prez-requirements.txt"
+          mkdir -p ../dist/prez/.python_packages/lib/site-packages
+          uv pip install --python "$(command -v python)" --no-deps \
+            --target ../dist/prez/.python_packages/lib/site-packages \
+            --requirements "$RUNNER_TEMP/prez-requirements.txt"
+          cp function_app.py patched_asgi_function_wrapper.py response_header_middleware.py host.json ../dist/prez/
+          cp -R config ../dist/prez/config
+          PYTHONPATH=../dist/prez/.python_packages/lib/site-packages python -c 'import azure.functions; import prez; import rdf2geojson'
+
+      - name: Build static Prez UI
+        run: |
+          docker build --file prez-ui/Dockerfile --target static-export \
+            --build-arg "NUXT_PUBLIC_PREZ_API_ENDPOINT=$PREZ_API_ENDPOINT" \
+            --output type=local,dest=dist/prez-ui .
+          test -f dist/prez-ui/index.html
+          test -f dist/prez-ui/staticwebapp.config.json
+
+      - name: Log in to Azure with GitHub OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Prez Function App
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ vars.AZURE_FUNCTION_APP_NAME }}
+          package: dist/prez
+          sku: flexconsumption
+          remote-build: false
+
+      - name: Deploy Prez UI
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.PREZ_UI_SWA_DEPLOYMENT_TOKEN }}
+          action: upload
+          app_location: dist/prez-ui
+          api_location: ''
+          output_location: ''
+          skip_app_build: true
+          skip_api_build: true
+          production_branch: ${{ github.ref_name }}
+
+      - name: Check public endpoints
+        run: |
+          curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors \
+            --connect-timeout 15 --max-time 60 "$PREZ_API_ENDPOINT/catalogues" --output /dev/null
+          curl --fail --silent --show-error --retry 12 --retry-delay 10 --retry-all-errors \
+            --connect-timeout 15 --max-time 60 "$PREZ_UI_URL/" --output /dev/null
