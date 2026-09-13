@@ -19,7 +19,7 @@ task prez:dev
 The local Functions host listens on <http://localhost:7071>. Copy
 `local.settings.example.json` to the ignored `local.settings.json` before first use.
 
-The `prez:uv:export` task can produce a temporary `requirements.txt` for a later
-Azure Python remote build. Deployment automation and production credential
-settings are intentionally deferred. Azure does not publish or read
-`local.settings.json` in production.
+Azure deployment is handled by the manually triggered **Deploy dev** workflow.
+See [the deployment runbook](../docs/deploy-dev.md) for infrastructure and GitHub
+settings. The workflow packages the full locked dependency set on Linux. Azure
+does not publish or read `local.settings.json` in production.

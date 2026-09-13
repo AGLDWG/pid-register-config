@@ -3,3 +3,6 @@
 docker/.env
 .idea/
 
+
+# Local deployment build output
+/dist/

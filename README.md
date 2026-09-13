@@ -55,6 +55,11 @@ Use `task functions:down` to stop the Functions-mode UI. Copy
 same SPARQL settings used by the selected Fuseki or remote endpoint.
 
 
+## Azure dev deployment
+
+See [the Azure dev deployment runbook](docs/deploy-dev.md) to configure the
+GitHub `dev` environment and run the manual **Deploy dev** workflow.
+
 ## License
 
 All the content of this repository is licensed with the [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) license with the following copyright notice:

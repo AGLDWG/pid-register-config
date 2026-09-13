@@ -15,6 +15,9 @@ COPY prez-ui/staticwebapp.config.json /app/public/staticwebapp.config.json
 COPY agldwg-logo-ochre-150.png /app/public/agldwg-logo-ochre-150.png
 RUN pnpm install
 RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm generate
+FROM scratch AS static-export
+COPY --from=build /app/.output/public /
+
 FROM nginx:alpine
 COPY prez-ui/nginx.conf /etc/nginx/templates/nginx.conf.template
 ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
