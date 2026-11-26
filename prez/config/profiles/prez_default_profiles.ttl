@@ -286,6 +286,8 @@ altr-ext:alt-profile
         owl:Ontology ,
         dcat:Catalog ,
         prof:Profile ,
+        sh:NodeShape ,
+        sh:PropertyShape ,
         sh:ShapesGraph ,
         <https://linked.data.gov.au/def/pid/PID> ,
         <https://linked.data.gov.au/def/pid/Pid> ,

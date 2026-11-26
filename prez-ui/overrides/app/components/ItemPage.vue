@@ -9,7 +9,9 @@ import BaseItemPage from 'prez-ui/app/components/ItemPage.vue';
                  activates the upstream fallback Members button. -->
             <div>
                 <RegisterMembers v-if="data?.data.members && data.data.rdfTypes?.some(type =>
-                    ['https://schema.org/DataCatalog', 'http://schema.org/DataCatalog'].includes(type.value))"
+                    ['https://schema.org/DataCatalog', 'http://schema.org/DataCatalog',
+                        'http://www.w3.org/2002/07/owl#Ontology',
+                        'http://www.w3.org/ns/shacl#ShapesGraph'].includes(type.value))"
                     :path="data.data.members.value" />
             </div>
         </template>

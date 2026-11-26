@@ -52,7 +52,8 @@ ex:child-items-listing
     ont:apiPath "/catalogues/{catalogId}/catalogues/{childCatalogId}/items" ;
     ont:relevantShapes
         ex:child-item-shape ,
-        ex:model-item-shape ;
+        ex:model-item-shape ,
+        ex:validator-item-shape ;
 .
 
 ex:child-items-object
@@ -63,7 +64,8 @@ ex:child-items-object
     ont:apiPath "/catalogues/{catalogId}/catalogues/{childCatalogId}/items/{itemId}" ;
     ont:relevantShapes
         ex:child-item-shape ,
-        ex:model-item-shape ;
+        ex:model-item-shape ,
+        ex:validator-item-shape ;
 .
 
 ex:child-catalogue-shape
@@ -171,4 +173,27 @@ ex:top-level-catalogue-shape
         ] ;
     sh:targetClass schema:DataCatalog ;
     ont:hierarchyLevel 1 ;
+.
+
+ex:validator-item-shape
+    a sh:NodeShape ;
+    sh:property 
+        [
+            sh:class schema:DataCatalog ;
+            sh:path (
+                rdfs:isDefinedBy
+                
+                [
+                    sh:inversePath rdfs:member ;
+                ]
+            ) ;
+        ] ,
+        [
+            sh:class sh:ShapesGraph ;
+            sh:path rdfs:isDefinedBy ;
+        ] ;
+    sh:targetClass
+        sh:NodeShape ,
+        sh:PropertyShape ;
+    ont:hierarchyLevel 3 ;
 .
