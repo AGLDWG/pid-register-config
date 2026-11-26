@@ -17,6 +17,8 @@ fi
 [ -f "${manifest}" ] || { echo "Manifest not found: ${manifest}" >&2; exit 1; }
 [ -n "${PIDDATA_PASSWORD:-}" ] || { echo "PIDDATA_PASSWORD must be set" >&2; exit 1; }
 command -v kgm >/dev/null 2>&1 || { echo "kgm is required: https://kurrawong.github.io/kgm/" >&2; exit 1; }
+command -v kurra >/dev/null 2>&1 || { echo "kurra is required to format staged RDF" >&2; exit 1; }
+command -v jq >/dev/null 2>&1 || { echo "jq is required" >&2; exit 1; }
 
 # Ten legacy environment PID records use pid:PID while the remaining records
 # and their validator use pid:Pid. kgm requires one main-entity class per
@@ -36,4 +38,20 @@ perl -pi -e \
   's!dcterms:conformsTo "validators/items/pid\.ttl" ;!schema:additionalType <https://linked.data.gov.au/def/pid/Pid> ;!g' \
   "${normalized_manifest}"
 
+kurra file reformat "${staging_dir}"
 kgm sync "${normalized_manifest}" "${fuseki_url}" -u "${piddata_username}" -p "${PIDDATA_PASSWORD}" True False True False
+
+# Catalogue membership can change without a dateModified change. Replace each
+# catalogue's named graph explicitly so removed membership predicates disappear.
+awk '/prof:hasArtifact ".*_cat\.ttl"/ { gsub(/"/, "", $2); print $2 }' "${normalized_manifest}" |
+while IFS= read -r artifact; do
+  catalogue_file="${staging_dir}/${artifact}"
+  catalogue_iri="$(kurra file sparql "${catalogue_file}" --q \
+    'SELECT DISTINCT ?iri WHERE { VALUES ?type { <https://schema.org/DataCatalog> <http://www.w3.org/ns/dcat#Catalog> } ?iri a ?type }' \
+    -f json | jq -er 'if (.results.bindings | length) == 1 then .results.bindings[0].iri else error("Expected one catalogue IRI") end')"
+  encoded_iri="$(jq -rn --arg iri "${catalogue_iri}" '$iri | @uri')"
+  curl -fsS -u "${piddata_username}:${PIDDATA_PASSWORD}" -X PUT \
+    -H 'Content-Type: text/turtle' --data-binary "@${catalogue_file}" \
+    "${fuseki_url%/}/data?graph=${encoded_iri}" >/dev/null
+  echo "Reloaded catalogue ${catalogue_iri}"
+done

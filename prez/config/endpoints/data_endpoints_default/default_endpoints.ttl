@@ -73,39 +73,40 @@ ex:child-catalogue-shape
             sh:class schema:DataCatalog ;
             sh:path
                 [
-                    sh:inversePath schema:hasPart ;
+                    sh:inversePath rdfs:member ;
                 ] ;
         ] ;
     sh:targetClass
         owl:Ontology ,
         sh:ShapesGraph ,
         schema:DataCatalog ,
-        schema:Organization ;
+        schema:Organization ,
+        schema:Person ;
     ont:hierarchyLevel 2 ;
 .
 
 ex:child-item-shape
     a sh:NodeShape ;
-    sh:property
-        [
-            sh:class schema:DataCatalog ;
-            sh:path (
-
-                [
-                    sh:inversePath schema:hasPart ;
-                ]
-
-                [
-                    sh:inversePath schema:hasPart ;
-                ]
-            ) ;
-        ] ,
+    sh:property 
         [
             sh:class schema:DataCatalog ;
             sh:path
                 [
-                    sh:inversePath schema:hasPart ;
+                    sh:inversePath rdfs:member ;
                 ] ;
+        ] ,
+        [
+            sh:class schema:DataCatalog ;
+            sh:path (
+                
+                [
+                    sh:inversePath rdfs:member ;
+                ]
+                
+                [
+                    sh:inversePath rdfs:member ;
+                ]
+            ) ;
         ] ;
     sh:targetClass
         pid:PID ,
@@ -113,11 +114,9 @@ ex:child-item-shape
     ont:hierarchyLevel 3 ;
 .
 
-# Classes and properties defined by a model are its level-three members.  The
-# second path also ties the model back to its containing top-level register.
 ex:model-item-shape
     a sh:NodeShape ;
-    sh:property
+    sh:property 
         [
             sh:class owl:Ontology ;
             sh:path rdfs:isDefinedBy ;
@@ -126,14 +125,17 @@ ex:model-item-shape
             sh:class schema:DataCatalog ;
             sh:path (
                 rdfs:isDefinedBy
-                [ sh:inversePath schema:hasPart ]
+                
+                [
+                    sh:inversePath rdfs:member ;
+                ]
             ) ;
         ] ;
     sh:targetClass
         rdf:Property ,
         rdfs:Class ,
-        owl:Class ,
         owl:AnnotationProperty ,
+        owl:Class ,
         owl:DatatypeProperty ,
         owl:ObjectProperty ;
     ont:hierarchyLevel 3 ;
@@ -144,25 +146,28 @@ ex:top-level-catalogue-shape
     sh:property
         [
             sh:or (
-
+                
                 [
                     sh:class schema:DataCatalog ;
                 ]
-
+                
                 [
                     sh:class schema:Organization ;
                 ]
-
+                
+                [
+                    sh:class schema:Person ;
+                ]
+                
                 [
                     sh:class owl:Ontology ;
                 ]
-
+                
                 [
                     sh:class sh:ShapesGraph ;
                 ]
-
             ) ;
-            sh:path schema:hasPart ;
+            sh:path rdfs:member ;
         ] ;
     sh:targetClass schema:DataCatalog ;
     ont:hierarchyLevel 1 ;

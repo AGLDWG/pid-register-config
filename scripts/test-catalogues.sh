@@ -63,6 +63,7 @@ assert_nonempty() {
 
 top_catalogues='https://linked.data.gov.au/reg/models
 https://linked.data.gov.au/reg/orgs
+https://linked.data.gov.au/reg/persons
 https://linked.data.gov.au/reg/pids
 https://linked.data.gov.au/reg/vals'
 pid_catalogues='https://linked.data.gov.au/reg/pids/datasets
@@ -71,6 +72,7 @@ https://linked.data.gov.au/reg/pids/envs
 https://linked.data.gov.au/reg/pids/orgs'
 model_members='https://linked.data.gov.au/def/pid'
 validator_members='https://linked.data.gov.au/def/agldwg-org
+https://linked.data.gov.au/def/agldwg-person
 https://linked.data.gov.au/def/pid/shapes'
 model_items='https://linked.data.gov.au/def/pid/Pid
 https://linked.data.gov.au/def/pid/RedirectTest
@@ -87,7 +89,7 @@ assert_members '/catalogues/reg:vals/catalogues?limit=100' "${validator_members}
 assert_members '/catalogues/reg1:/catalogues/ont:/items?limit=100' "${model_items}"
 
 org_count_query='SELECT (COUNT(DISTINCT ?org) AS ?count) WHERE {
-  <https://linked.data.gov.au/reg/orgs> <https://schema.org/hasPart> ?org
+  <https://linked.data.gov.au/reg/orgs> <http://www.w3.org/2000/01/rdf-schema#member> ?org
 }'
 expected_org_count="$(curl -fsS -u "${piddata_username}:${PIDDATA_PASSWORD}" -G \
   --data-urlencode "query=${org_count_query}" -H 'Accept: application/sparql-results+json' "${fuseki_query_url}" \
