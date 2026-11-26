@@ -5,8 +5,8 @@ import BaseItemPage from 'prez-ui/app/components/ItemPage.vue';
 <template>
     <BaseItemPage>
         <template #item-members="{ data }">
-            <RegisterMembers v-if="data?.data.members && !data.data.rdfTypes?.some(type =>
-                ['https://schema.org/Person', 'http://schema.org/Person'].includes(type.value))"
+            <RegisterMembers v-if="data?.data.members && data.data.rdfTypes?.some(type =>
+                ['https://schema.org/DataCatalog', 'http://schema.org/DataCatalog'].includes(type.value))"
                 :path="data.data.members.value" />
         </template>
     </BaseItemPage>
