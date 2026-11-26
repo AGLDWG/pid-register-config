@@ -25,8 +25,14 @@ altr-ext:alt-profile
     altr-ext:constrainsClass
         geo:Feature ,
         geo:FeatureCollection ,
+        rdf:Property ,
         rdf:Resource ,
+        rdfs:Class ,
         rdfs:Resource ,
+        owl:AnnotationProperty ,
+        owl:Class ,
+        owl:DatatypeProperty ,
+        owl:ObjectProperty ,
         owl:Ontology ,
         skos:Collection ,
         skos:Concept ,
@@ -66,6 +72,58 @@ altr-ext:alt-profile
         ] ;
 .
 
+<https://prez.dev/profile/prez>
+    a
+        prof:Profile ,
+        prez:IndexProfile ;
+    dcterms:description "A profile for the Prez Linked Data API" ;
+    dcterms:identifier "prez"^^xsd:token ;
+    dcterms:title "Prez profile" ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat
+        "application/anot+ld+json" ,
+        "application/ld+json" ,
+        "application/rdf+xml" ,
+        "text/anot+turtle" ,
+        "text/turtle" ;
+.
+
+<https://prez.dev/profile/profiles>
+    a
+        prof:Profile ,
+        prez:ListingProfile ,
+        prez:ObjectProfile ;
+    dcterms:description "A profile for displaying profiles." ;
+    dcterms:identifier "prof"^^xsd:token ;
+    dcterms:title "Profiles Profile" ;
+    altr-ext:constrainsClass prof:Profile ;
+    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasResourceFormat
+        "application/anot+ld+json" ,
+        "application/ld+json" ,
+        "application/rdf+xml" ,
+        "text/anot+turtle" ,
+        "text/turtle" ;
+    sh:property
+        [
+            sh:path
+                [
+                    sh:union (
+                        
+                        [
+                            shext:bNodeDepth "25" ;
+                        ]
+                        rdf:type
+                        altr-ext:hasResourceFormat
+                        altr-ext:hasDefaultResourceFormat
+                        dcterms:description
+                        dcterms:title
+                        dcterms:identifier
+                    ) ;
+                ] ;
+        ] ;
+.
+
 <https://prez.dev/profile/open-object>
     a
         prof:Profile ,
@@ -74,8 +132,24 @@ altr-ext:alt-profile
     dcterms:identifier "openobj"^^xsd:token ;
     dcterms:title "Open profile" ;
     altr-ext:constrainsClass
+        geo:Feature ,
+        geo:FeatureCollection ,
+        rdf:Property ,
+        rdfs:Class ,
+        rdfs:Resource ,
+        owl:AnnotationProperty ,
+        owl:Class ,
+        owl:DatatypeProperty ,
+        owl:ObjectProperty ,
+        owl:Ontology ,
+        skos:Collection ,
+        skos:Concept ,
+        skos:ConceptScheme ,
         dcat:Catalog ,
+        dcat:Dataset ,
+        dcat:Resource ,
         prof:Profile ,
+        sh:ShapesGraph ,
         <https://linked.data.gov.au/def/pid/PID> ,
         <https://linked.data.gov.au/def/pid/Pid> ,
         prez:CQLFilterResult ,
@@ -86,6 +160,25 @@ altr-ext:alt-profile
         schema:Organization ,
         schema:Person ;
     altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
+    altr-ext:hasNodeShape
+        [
+            altr-ext:hasDefaultProfile <https://prez.dev/profile/open-object> ;
+            sh:targetClass
+                rdf:Property ,
+                rdfs:Class ,
+                rdfs:Resource ,
+                owl:AnnotationProperty ,
+                owl:Class ,
+                owl:DatatypeProperty ,
+                owl:ObjectProperty ,
+                owl:Ontology ,
+                sh:ShapesGraph ,
+                <https://linked.data.gov.au/def/pid/PID> ,
+                <https://linked.data.gov.au/def/pid/Pid> ,
+                schema:DataCatalog ,
+                schema:Organization ,
+                schema:Person ;
+        ] ;
     altr-ext:hasResourceFormat
         "application/anot+ld+json" ,
         "application/ld+json" ,
@@ -170,58 +263,6 @@ altr-ext:alt-profile
                         schema:url
                         schema:value
                         schema:version
-                    ) ;
-                ] ;
-        ] ;
-.
-
-<https://prez.dev/profile/prez>
-    a
-        prof:Profile ,
-        prez:IndexProfile ;
-    dcterms:description "A profile for the Prez Linked Data API" ;
-    dcterms:identifier "prez"^^xsd:token ;
-    dcterms:title "Prez profile" ;
-    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
-    altr-ext:hasResourceFormat
-        "application/anot+ld+json" ,
-        "application/ld+json" ,
-        "application/rdf+xml" ,
-        "text/anot+turtle" ,
-        "text/turtle" ;
-.
-
-<https://prez.dev/profile/profiles>
-    a
-        prof:Profile ,
-        prez:ListingProfile ,
-        prez:ObjectProfile ;
-    dcterms:description "A profile for displaying profiles." ;
-    dcterms:identifier "prof"^^xsd:token ;
-    dcterms:title "Profiles Profile" ;
-    altr-ext:constrainsClass prof:Profile ;
-    altr-ext:hasDefaultResourceFormat "text/anot+turtle" ;
-    altr-ext:hasResourceFormat
-        "application/anot+ld+json" ,
-        "application/ld+json" ,
-        "application/rdf+xml" ,
-        "text/anot+turtle" ,
-        "text/turtle" ;
-    sh:property
-        [
-            sh:path
-                [
-                    sh:union (
-                        
-                        [
-                            shext:bNodeDepth "25" ;
-                        ]
-                        rdf:type
-                        altr-ext:hasResourceFormat
-                        altr-ext:hasDefaultResourceFormat
-                        dcterms:description
-                        dcterms:title
-                        dcterms:identifier
                     ) ;
                 ] ;
         ] ;

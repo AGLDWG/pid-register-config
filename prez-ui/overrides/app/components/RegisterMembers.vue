@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { parseMembers, sortMembers, type MemberNode, type RegisterMember } from '../utils/memberList';
+import { isPrezVocabulary } from '../utils/publicRdf';
 
 const props = defineProps<{ path: string }>();
 const apiEndpoint = useGetPrezAPIEndpoint();
@@ -36,7 +37,7 @@ watch(() => props.path, async (path, _, onCleanup) => {
             if (batch.length < 100) break;
             if (collected.size === previousSize) throw new Error('Member pagination did not advance');
         }
-        if (!controller.signal.aborted) members.value = [...collected.values()];
+        if (!controller.signal.aborted) members.value = [...collected.values()].filter(member => !isPrezVocabulary(member.iri));
     } catch {
         if (!controller.signal.aborted) failed.value = true;
     } finally {

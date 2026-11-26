@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { isPrezVocabulary } from '../utils/publicRdf';
 interface ResourceLink {
     value: string;
     parents?: { url: string; label?: { value: string } }[];
@@ -30,7 +31,9 @@ interface SearchResult {
 }
 
 const props = defineProps<{ results: SearchResult[] }>();
-const sortedResults = computed(() => [...props.results].sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)));
+const sortedResults = computed(() => props.results.filter(result =>
+    !isPrezVocabulary(result.resource.value) && !isPrezVocabulary(result.predicate.value))
+    .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)));
 const embeddedMatches = computed(() => props.results.filter(result => result.resource.termType === 'BlankNode'));
 const { parents: embeddingParents, loading: parentsLoading, failed: parentsFailed } = useEmbeddedParents(embeddedMatches);
 const parentsFor = (result: SearchResult) => embeddingParents.value[result.hash.replace(/^urn:hash:/, '')] || [];
@@ -39,7 +42,7 @@ const resourceUrl = (resource: SearchResult["resource"] | ResourceType) =>
 const resourceTypes = (result: SearchResult) => (result.resource.rdfTypes?.length
     ? result.resource.rdfTypes
     : result.resource.properties?.['http://www.w3.org/1999/02/22-rdf-syntax-ns#type']?.objects || [])
-    .filter(type => !/^https?:\/\/olis\.dev[\/#]/.test(type.value)
+    .filter(type => !isPrezVocabulary(type.value) && !/^https?:\/\/olis\.dev[\/#]/.test(type.value)
         && !type.value.startsWith('olis:')
         && !type.curie?.startsWith('olis:')
         && !type.identifiers?.some(identifier => identifier.value.startsWith('olis:')));

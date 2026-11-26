@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import BaseNode from 'prez-ui/app/components/Node.vue';
 import { definitionLink, localDefinitionsQuery } from '../utils/localDefinitions';
+import { isPrezVocabulary } from '../utils/publicRdf';
 
 defineOptions({ inheritAttrs: false });
 const props = defineProps<{ term: { value: string; termType?: string; [key: string]: unknown } }>();
@@ -21,7 +22,7 @@ const linkedTerm = computed(() => definitions.value?.includes(props.term.value)
 </script>
 
 <template>
-    <BaseNode :key="linkedTerm.links?.[0]?.value || term.value" v-bind="$attrs" :term="linkedTerm">
+    <BaseNode v-if="!isPrezVocabulary(term.value)" :key="linkedTerm.links?.[0]?.value || term.value" v-bind="$attrs" :term="linkedTerm">
         <template v-for="(_, name) in $slots" #[name]="slotProps">
             <slot :name="name" v-bind="slotProps || {}" />
         </template>

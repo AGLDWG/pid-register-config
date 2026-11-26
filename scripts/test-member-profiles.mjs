@@ -38,3 +38,19 @@ for (const objectPath of ['/catalogues/reg:pids', '/catalogues/reg:pids/catalogu
         && node['http://purl.org/dc/terms/title']), 'Explicit alternates must still return profile rows');
 }
 console.log('OK: member pagination and explicit alternate-profile tables');
+
+for (const [iri, path] of [
+    ['https://linked.data.gov.au/def/pid', '/catalogues/reg1:/catalogues/ont:'],
+    ['https://linked.data.gov.au/def/pid/shapes', '/object'],
+    ['https://linked.data.gov.au/def/pid/Pid', '/object'],
+    ['https://linked.data.gov.au/def/pid/redirectRules', '/object'],
+]) {
+    const query = path === '/object' ? { iri } : {};
+    const details = await read(path, query);
+    assert.ok(currentProfile(details).includes('https://prez.dev/profile/open-object'), `${iri}: details must use Open profile`);
+    assert.ok(parseMembers(details).some(resource => resource.iri === iri), `${iri}: details must describe the requested resource`);
+    const alternates = await read(path, { ...query, _profile: 'altr-ext:alt-profile' });
+    assert.ok(currentProfile(alternates).includes('http://www.w3.org/ns/dx/connegp/altr-ext#alt-profile'),
+        `${iri}: an explicit alternates request must still use Alternates Profile`);
+    console.log(`OK: resource details and explicit alternates for ${iri}`);
+}
